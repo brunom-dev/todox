@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String     @id @default(uuid())
+  name          String
+  email         String     @unique
+  password_hash String
+  createdAt     DateTime   @default(now())
+
+  // Relacionamentos
+  categories    Category[]
+  goals         Goal[]
+  tasks         Task[]
+
+  @@map("users")
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String
+  color     String?
+  userId    String
+  parentId  String?    // Campo adicionado para a Subcategoria
+
+  // Relacionamentos
+  user      User       @relation(fields: [userId], references: [id])
+  parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children  Category[] @relation("SubCategories")
+  tasks     Task[]
+
+  @@map("categories")
+}
+
+model Goal {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  deadline    DateTime?
+  userId      String
+  createdAt   DateTime  @default(now())
+
+  // Relacionamentos
+  user        User      @relation(fields: [userId], references: [id])
+  tasks       Task[]
+
+  @@map("goals")
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String    @default("TODO") // Padrões do Kanban: TODO, IN_PROGRESS, DONE
+  dueDate     DateTime?
+  userId      String
+  categoryId  String?
+  goalId      String?
+  createdAt   DateTime  @default(now())
+
+  // Relacionamentos
+  user        User      @relation(fields: [userId], references: [id])
+  category    Category? @relation(fields: [categoryId], references: [id])
+  goal        Goal?     @relation(fields: [goalId], references: [id])
+
+  @@map("tasks")
+}
