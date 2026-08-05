@@ -47,4 +47,74 @@ export class TaskController {
             return res.status(500).json({ error: "Erro interno." });
         }
     }
+
+    async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            if (!id || Array.isArray(id)) {
+                return res.status(400).json({ error: "ID inválido." });
+            }
+
+            const { title, description, status, dueDate, categoryId, goalId } =
+                req.body;
+            const userId = req.userId;
+
+            const task = await prisma.task.findUnique({
+                where: { id },
+            });
+
+            if (!task || task.userId !== userId) {
+                return res
+                    .status(404)
+                    .json({ error: "Tarefa não encontrada." });
+            }
+
+            const updatedTask = await prisma.task.update({
+                where: { id },
+                data: {
+                    title,
+                    description,
+                    status,
+                    dueDate: dueDate ? new Date(dueDate) : null,
+                    categoryId,
+                    goalId,
+                },
+            });
+
+            return res.json(updatedTask);
+        } catch (error) {
+            return res.status(500).json({ error: "Erro interno." });
+        }
+    }
+
+    async delete(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            
+            if (!id || Array.isArray(id)) {
+                return res.status(400).json({ error: "ID inválido." });
+            }
+
+            const userId = req.userId;
+
+            const task = await prisma.task.findUnique({
+                where: { id },
+            });
+
+            if (!task || task.userId !== userId) {
+                return res
+                    .status(404)
+                    .json({ error: "Tarefa não encontrada." });
+            }
+
+            await prisma.task.delete({
+                where: { id },
+            });
+
+            return res.status(204).send();
+        } catch (error) {
+            return res.status(500).json({ error: "Erro interno." });
+        }
+    }
 }
