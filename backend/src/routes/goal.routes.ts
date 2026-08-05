@@ -9,5 +9,7 @@ goalRoutes.use(authMiddleware);
 
 goalRoutes.post('/goals', goalController.create);
 goalRoutes.get('/goals', goalController.list);
+goalRoutes.put('/goals/:id', goalController.update);
+goalRoutes.delete('/goals/:id', goalController.delete);
 
 export { goalRoutes };

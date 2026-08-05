@@ -42,4 +42,66 @@ export class GoalController {
             return res.status(500).json({ error: "Erro interno." });
         }
     }
+
+    async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            if (!id || Array.isArray(id)) {
+                return res.status(400).json({ error: "ID inválido." });
+            }
+
+            const { title, description, deadline } = req.body;
+            const userId = req.userId;
+
+            const goal = await prisma.goal.findUnique({
+                where: { id },
+            });
+
+            if (!goal || goal.userId !== userId) {
+                return res.status(404).json({ error: "Meta não encontrada." });
+            }
+
+            const updatedGoal = await prisma.goal.update({
+                where: { id },
+                data: {
+                    title,
+                    description,
+                    deadline: deadline ? new Date(deadline) : null,
+                },
+            });
+
+            return res.json(updatedGoal);
+        } catch (error) {
+            return res.status(500).json({ error: "Erro interno." });
+        }
+    }
+
+    async delete(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+
+            if (!id || Array.isArray(id)) {
+                return res.status(400).json({ error: "ID inválido." });
+            }
+
+            const userId = req.userId;
+
+            const goal = await prisma.goal.findUnique({
+                where: { id },
+            });
+
+            if (!goal || goal.userId !== userId) {
+                return res.status(404).json({ error: "Meta não encontrada." });
+            }
+
+            await prisma.goal.delete({
+                where: { id },
+            });
+
+            return res.status(204).send();
+        } catch (error) {
+            return res.status(500).json({ error: "Erro interno." });
+        }
+    }
 }

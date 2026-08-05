@@ -9,5 +9,7 @@ categoryRoutes.use(authMiddleware);
 
 categoryRoutes.post('/categories', categoryController.create);
 categoryRoutes.get('/categories', categoryController.list);
+categoryRoutes.put('/categories/:id', categoryController.update);
+categoryRoutes.delete('/categories/:id', categoryController.delete);
 
 export { categoryRoutes };
