@@ -1,6 +1,10 @@
 import express from "express";
 import { prisma } from "./lib/prisma.js";
+
 import { userRoutes } from "./routes/user.routes.js";
+import { categoryRoutes } from './routes/category.routes.js';
+import { goalRoutes } from './routes/goal.routes.js';
+import { taskRoutes } from './routes/task.routes.js';
 
 import dotenv from "dotenv";
 
@@ -22,6 +26,9 @@ app.get("/ping", async (req, res) => {
 });
 
 app.use("/api", userRoutes);
+app.use('/api', categoryRoutes);
+app.use('/api', goalRoutes);
+app.use('/api', taskRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
