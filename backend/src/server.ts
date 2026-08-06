@@ -1,17 +1,19 @@
 import express from "express";
+import cors from "cors";
 import { prisma } from "./lib/prisma.js";
-
 import { userRoutes } from "./routes/user.routes.js";
-import { categoryRoutes } from './routes/category.routes.js';
-import { goalRoutes } from './routes/goal.routes.js';
-import { taskRoutes } from './routes/task.routes.js';
-import { dashboardRoutes } from './routes/dashboard.routes.js';
+import { categoryRoutes } from "./routes/category.routes.js";
+import { goalRoutes } from "./routes/goal.routes.js";
+import { taskRoutes } from "./routes/task.routes.js";
+import { dashboardRoutes } from "./routes/dashboard.routes.js";
 
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 app.get("/ping", async (req, res) => {
@@ -27,10 +29,10 @@ app.get("/ping", async (req, res) => {
 });
 
 app.use("/api", userRoutes);
-app.use('/api', categoryRoutes);
-app.use('/api', goalRoutes);
-app.use('/api', taskRoutes);
-app.use('/api', dashboardRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", goalRoutes);
+app.use("/api", taskRoutes);
+app.use("/api", dashboardRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
